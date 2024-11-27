@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Anthony Contreras">
+
+<title>Método de Newton, Secante y Bisección</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="newton_secante_files/libs/clipboard/clipboard.min.js"></script>
+<script src="newton_secante_files/libs/quarto-html/quarto.js"></script>
+<script src="newton_secante_files/libs/quarto-html/popper.min.js"></script>
+<script src="newton_secante_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="newton_secante_files/libs/quarto-html/anchor.min.js"></script>
+<link href="newton_secante_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="newton_secante_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="newton_secante_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="newton_secante_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="newton_secante_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de Contenidos</h2>
+   
+  <ul>
+  <li><a href="#conjunto-de-ejercicios" id="toc-conjunto-de-ejercicios" class="nav-link active" data-scroll-target="#conjunto-de-ejercicios">Conjunto de Ejercicios</a>
+  <ul class="collapse">
+  <li><a href="#ejercicio-1" id="toc-ejercicio-1" class="nav-link" data-scroll-target="#ejercicio-1">Ejercicio 1</a></li>
+  <li><a href="#ejercicio-2" id="toc-ejercicio-2" class="nav-link" data-scroll-target="#ejercicio-2">Ejercicio 2</a></li>
+  <li><a href="#ejercicio-3" id="toc-ejercicio-3" class="nav-link" data-scroll-target="#ejercicio-3">Ejercicio 3</a></li>
+  <li><a href="#ejericio-4" id="toc-ejericio-4" class="nav-link" data-scroll-target="#ejericio-4">Ejericio 4</a></li>
+  <li><a href="#ejercicio-5" id="toc-ejercicio-5" class="nav-link" data-scroll-target="#ejercicio-5">Ejercicio 5</a></li>
+  <li><a href="#ejercicio-6" id="toc-ejercicio-6" class="nav-link" data-scroll-target="#ejercicio-6">Ejercicio 6</a></li>
+  <li><a href="#ejercicio-7" id="toc-ejercicio-7" class="nav-link" data-scroll-target="#ejercicio-7">Ejercicio 7</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Método de Newton, Secante y Bisección</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Anthony Contreras </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="conjunto-de-ejercicios" class="level1">
+<h1>Conjunto de Ejercicios</h1>
+<p>Link Repositorio Github: <a href="https://github.com/7heAnsw3r/metodos_numericos/blob/main/M%C3%A9todo%20de%20Newton%20y%20de%20la%20Secante/newton_secante.ipynb">Método de Newton, Secante y Bisección</a></p>
+<section id="ejercicio-1" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-1">Ejercicio 1</h2>
+<p>Sea 𝑓(𝑥) = −𝑥³ − cos 𝑥 y 𝑝₀ = −1. Use el <strong>método de Newton</strong> y de la <strong>Secante</strong> para encontrar 𝑝₂. ¿Se podría usar 𝑝₀ = 0?</p>
+<div id="44ab87f024617e88" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T19:35:14.008075Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T19:35:13.917301Z&quot;}" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x):</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>x<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> np.cos(x)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime(x):</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span><span class="dv">3</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> np.sin(x)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> metodo_newton(f,f_prime, p0, tol<span class="op">=</span><span class="fl">1e-10</span>,max_iter<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(max_iter):</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        f_p0 <span class="op">=</span> f(p0)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        f_prime_p0 <span class="op">=</span> f_prime(p0)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(f_prime_p0) <span class="op">&lt;</span> tol:</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">'La derivada es muy cercana a cero, el método no converge.'</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        p1 <span class="op">=</span> p0 <span class="op">-</span> f_p0 <span class="op">/</span> f_prime_p0</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Iteración </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: p</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>p0<span class="sc">}</span><span class="ss">, p</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>p1<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(p1 <span class="op">-</span> p0) <span class="op">&lt;</span> tol:  <span class="co"># Converge si la diferencia es menor a la tolerancia</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> p1</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        p0 <span class="op">=</span> p1</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'No se alcanzó la tolerancia en el número máximo de iteraciones.'</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p0</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> metodo_secante(f, p0, p1, tol<span class="op">=</span><span class="fl">1e-10</span>, max_iter<span class="op">=</span><span class="dv">100</span>):</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(max_iter):</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>        f_p0 <span class="op">=</span> f(p0)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        f_p1 <span class="op">=</span> f(p1)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(f_p1 <span class="op">-</span> f_p0) <span class="op">&lt;</span> tol:  <span class="co"># Evitar división por cero</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">'La diferencia entre f(p0) y f(p1) es muy pequeña, el método no converge.'</span>)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        p2 <span class="op">=</span> p1 <span class="op">-</span> f_p1 <span class="op">*</span> (p1 <span class="op">-</span> p0) <span class="op">/</span> (f_p1 <span class="op">-</span> f_p0)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Iteración </span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: p</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>p0<span class="sc">}</span><span class="ss">, p</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>p1<span class="sc">}</span><span class="ss">, p</span><span class="sc">{</span>i<span class="op">+</span><span class="dv">2</span><span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>p2<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(p2 <span class="op">-</span> p1) <span class="op">&lt;</span> tol:  <span class="co"># Converge si la diferencia es menor a la tolerancia</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> p2</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        p0, p1 <span class="op">=</span> p1, p2</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'No se alcanzó la tolerancia en el número máximo de iteraciones.'</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p1</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Parámetros iniciales</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>p0_newton <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>p0_secant <span class="op">=</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>p1_secant <span class="op">=</span> <span class="op">-</span><span class="fl">0.8804</span>  <span class="co"># A partir de Newton</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Resolución con el método de Newton</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Método de Newton:'</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>p2_newton <span class="op">=</span> metodo_newton(f, f_prime, p0_newton)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Resolución con el método de la Secante</span></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Método de la Secante:'</span>)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>p2_secant <span class="op">=</span> metodo_secante(f, p0_secant, p1_secant)</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Resultados finales</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">Resultado final:'</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Con el método de Newton: p2 ≈ </span><span class="sc">{</span>p2_newton<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Con el método de la Secante: p2 ≈ </span><span class="sc">{</span>p2_secant<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+Método de Newton:
+Iteración 1: p0 = -1, p1 = -0.880332899571582
+Iteración 2: p1 = -0.880332899571582, p2 = -0.8656841631760818
+Iteración 3: p2 = -0.8656841631760818, p3 = -0.865474075952977
+Iteración 4: p3 = -0.865474075952977, p4 = -0.8654740331016162
+Iteración 5: p4 = -0.8654740331016162, p5 = -0.8654740331016144
+
+Método de la Secante:
+Iteración 1: p0 = -1, p1 = -0.8804, p2 = -0.8672429493882272
+Iteración 2: p1 = -0.8804, p2 = -0.8672429493882272, p3 = -0.8654993790397474
+Iteración 3: p2 = -0.8672429493882272, p3 = -0.8654993790397474, p4 = -0.865474076572966
+Iteración 4: p3 = -0.8654993790397474, p4 = -0.865474076572966, p5 = -0.865474033102684
+Iteración 5: p4 = -0.865474076572966, p5 = -0.865474033102684, p6 = -0.8654740331016144
+
+Resultado final:
+Con el método de Newton: p2 ≈ -0.8654740331016144
+Con el método de la Secante: p2 ≈ -0.8654740331016144</code></pre>
+</div>
+</div>
+</section>
+<section id="ejercicio-2" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-2">Ejercicio 2</h2>
+<p>Encuentre soluciones precisas dentro de (10^{-4}) para los siguientes problemas:</p>
+<ol type="a">
+<li><p>(𝑥³ − 2𝑥² − 5 = 0), ([1, 4])</p></li>
+<li><p>(𝑥³ + 3𝑥² − 1 = 0), ([-3, −2])</p></li>
+<li><p>(𝑥 − 𝑥 = 0), ([0, /2])</p></li>
+<li><p>(𝑥 − 0.8 − 0.2 𝑥 = 0), ([0, /2])</p></li>
+</ol>
+<div id="577088da625b131f" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T19:35:21.048416Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T19:35:21.038906Z&quot;}" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>intervalos <span class="op">=</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"a"</span>: (<span class="dv">1</span>, <span class="dv">4</span>),</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"b"</span>: (<span class="op">-</span><span class="dv">3</span>, <span class="op">-</span><span class="dv">2</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"c"</span>: (<span class="dv">0</span>, np.pi <span class="op">/</span> <span class="dv">2</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"d"</span>: (<span class="dv">0</span>, np.pi <span class="op">/</span> <span class="dv">2</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> metodo_biseccion(f,a,b, tol <span class="op">=</span><span class="fl">1e-4</span>, max_iter <span class="op">=</span> <span class="dv">100</span>):</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> f(a) <span class="op">*</span> f(b) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'NO tiene al menos una raiz'</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Resolviendo el intervalo [</span><span class="sc">{</span>a<span class="sc">}</span><span class="ss">,</span><span class="sc">{</span>b<span class="sc">}</span><span class="ss">] con tolerancia </span><span class="sc">{</span>tol<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    iteracion <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (b <span class="op">-</span> a) <span class="op">&gt;</span> tol <span class="kw">and</span> iteracion <span class="op">&lt;</span> max_iter:</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        p <span class="op">=</span> (a<span class="op">+</span>b)<span class="op">/</span><span class="dv">2</span> <span class="co"># El primer paso es calcular el punto medio del intervalo</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        f_p <span class="op">=</span> f(p)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Iteracion </span><span class="sc">{</span>iteracion <span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss">: p = </span><span class="sc">{</span>p<span class="sc">}</span><span class="ss">, p</span><span class="sc">{</span>iteracion <span class="op">+</span><span class="dv">1</span><span class="sc">}</span><span class="ss"> = </span><span class="sc">{</span>f_p<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">abs</span>(f_p) <span class="op">&lt;</span> tol <span class="kw">or</span> (b<span class="op">-</span>a)<span class="op">/</span><span class="dv">2</span> <span class="op">&lt;</span> tol: <span class="co"># Verificamos la tolerancia</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> p</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Actualizamos los intervalos</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> f(a) <span class="op">*</span> f_p <span class="op">&lt;</span> <span class="dv">0</span>:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            b <span class="op">=</span> p</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            a <span class="op">=</span> p</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        iteracion <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> iteracion <span class="op">==</span> <span class="dv">100</span>:</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'No se alcanzo la tolerancia en el numero maximo de iteraciones.'</span>)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_a(x):  <span class="co"># a. x^3 - 2x^2 - 5</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">-</span> <span class="dv">2</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">5</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_b(x):  <span class="co"># b. x^3 + 3x^2 - 1</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">1</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_c(x):  <span class="co"># c. x - cos(x)</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">-</span> np.cos(x)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_d(x):  <span class="co"># d. x - 0.8 - 0.2*sin(x)</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x <span class="op">-</span> <span class="fl">0.8</span> <span class="op">-</span> <span class="fl">0.2</span> <span class="op">*</span> np.sin(x)</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Resolución de las funciones usando el metodo de Bisección</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Soluciones del ejercicio 2:</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Función a</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>sol_a <span class="op">=</span> metodo_biseccion(f_a, <span class="op">*</span>intervalos[<span class="st">"a"</span>])</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Solución para (a): x ≈ </span><span class="sc">{</span>sol_a<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Función b</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>sol_b <span class="op">=</span> metodo_biseccion(f_b, <span class="op">*</span>intervalos[<span class="st">"b"</span>])</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Solución para (b): x ≈ </span><span class="sc">{</span>sol_b<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Función c</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>sol_c <span class="op">=</span> metodo_biseccion(f_c, <span class="op">*</span>intervalos[<span class="st">"c"</span>])</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Solución para (c): x ≈ </span><span class="sc">{</span>sol_c<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Función d</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>sol_d <span class="op">=</span> metodo_biseccion(f_d, <span class="op">*</span>intervalos[<span class="st">"d"</span>])</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="ch">\n</span><span class="ss">Solución para (d): x ≈ </span><span class="sc">{</span>sol_d<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Soluciones del ejercicio 2:
+
+Resolviendo el intervalo [1,4] con tolerancia 0.0001
+Iteracion 1: p = 2.5, p1 = -1.875
+Iteracion 2: p = 3.25, p2 = 8.203125
+Iteracion 3: p = 2.875, p3 = 2.232421875
+Iteracion 4: p = 2.6875, p4 = -0.034423828125
+Iteracion 5: p = 2.78125, p5 = 1.043243408203125
+Iteracion 6: p = 2.734375, p6 = 0.4907798767089844
+Iteracion 7: p = 2.7109375, p7 = 0.2248091697692871
+Iteracion 8: p = 2.69921875, p8 = 0.09435528516769409
+Iteracion 9: p = 2.693359375, p9 = 0.02975698560476303
+Iteracion 10: p = 2.6904296875, p10 = -0.0023855315521359444
+Iteracion 11: p = 2.69189453125, p11 = 0.01367269002366811
+Iteracion 12: p = 2.691162109375, p12 = 0.005640321163809858
+Iteracion 13: p = 2.6907958984375, p13 = 0.0016265804351860425
+Iteracion 14: p = 2.69061279296875, p14 = -0.00037967913272041187
+Iteracion 15: p = 2.690704345703125, p15 = 0.0006233997553692916
+
+Solución para (a): x ≈ 2.690704345703125
+Resolviendo el intervalo [-3,-2] con tolerancia 0.0001
+Iteracion 1: p = -2.5, p1 = 2.125
+Iteracion 2: p = -2.75, p2 = 0.890625
+Iteracion 3: p = -2.875, p3 = 0.033203125
+Iteracion 4: p = -2.9375, p4 = -0.460693359375
+Iteracion 5: p = -2.90625, p5 = -0.208160400390625
+Iteracion 6: p = -2.890625, p6 = -0.08609390258789062
+Iteracion 7: p = -2.8828125, p7 = -0.026100635528564453
+Iteracion 8: p = -2.87890625, p8 = 0.003637254238128662
+Iteracion 9: p = -2.880859375, p9 = -0.011210165917873383
+Iteracion 10: p = -2.8798828125, p10 = -0.003781077452003956
+Iteracion 11: p = -2.87939453125, p11 = -7.056735921651125e-05
+
+Solución para (b): x ≈ -2.87939453125
+Resolviendo el intervalo [0,1.5707963267948966] con tolerancia 0.0001
+Iteracion 1: p = 0.7853981633974483, p1 = 0.0782913822109007
+Iteracion 2: p = 0.39269908169872414, p2 = -0.5311804508125626
+Iteracion 3: p = 0.5890486225480862, p3 = -0.24242098975445903
+Iteracion 4: p = 0.6872233929727672, p4 = -0.08578706038996975
+Iteracion 5: p = 0.7363107781851077, p5 = -0.004640347169851511
+Iteracion 6: p = 0.760854470791278, p6 = 0.03660738783981099
+Iteracion 7: p = 0.7485826244881928, p7 = 0.015928352815779867
+Iteracion 8: p = 0.7424467013366502, p8 = 0.005630132459280346
+Iteracion 9: p = 0.739378739760879, p9 = 0.0004914153002637534
+Iteracion 10: p = 0.7378447589729933, p10 = -0.0020753364865229162
+Iteracion 11: p = 0.7386117493669362, p11 = -0.0007921780792695676
+Iteracion 12: p = 0.7389952445639076, p12 = -0.0001504357420498703
+Iteracion 13: p = 0.7391869921623933, p13 = 0.00017047619334453756
+Iteracion 14: p = 0.7390911183631504, p14 = 1.0016828909886755e-05
+
+Solución para (c): x ≈ 0.7390911183631504
+Resolviendo el intervalo [0,1.5707963267948966] con tolerancia 0.0001
+Iteracion 1: p = 0.7853981633974483, p1 = -0.1560231928398613
+Iteracion 2: p = 1.1780972450961724, p2 = 0.193321338593915
+Iteracion 3: p = 0.9817477042468103, p3 = 0.015453781786301246
+Iteracion 4: p = 0.8835729338221293, p4 = -0.07102915685041811
+Iteracion 5: p = 0.9326603190344698, p5 = -0.02798118726165924
+Iteracion 6: p = 0.9572040116406401, p6 = -0.006312950989676741
+Iteracion 7: p = 0.9694758579437253, p7 = 0.004557997386720136
+Iteracion 8: p = 0.9633399347921827, p8 = -0.000880568206038268
+Iteracion 9: p = 0.966407896367954, p9 = 0.0018379400927886758
+Iteracion 10: p = 0.9648739155800683, p10 = 0.00047849252421994226
+Iteracion 11: p = 0.9641069251861255, p11 = -0.0002010861699940636
+Iteracion 12: p = 0.9644904203830968, p12 = 0.00013869109162645277
+Iteracion 13: p = 0.9642986727846112, p13 = -3.120056015359918e-05
+
+Solución para (d): x ≈ 0.9642986727846112</code></pre>
+</div>
+</div>
+</section>
+<section id="ejercicio-3" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-3">Ejercicio 3</h2>
+<p>Use los dos métodos vistos en esta sección para encontrar las soluciones dentro de (10^{-5}) para los siguientes problemas:</p>
+<ol type="a">
+<li>(3𝑥 − e^𝑥 = 0), (1 𝑥 )</li>
+<li>(2𝑥 + 3 𝑥 − e^𝑥 = 0), (1 𝑥 )</li>
+</ol>
+<div id="91044971b1e45e51" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:13:30.627835Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:13:30.620324Z&quot;}" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Vamos a utilizar las funciones que hemos utilizado anteriormente para resolver los ejercicios</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Metodo de Newton</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_a(x):</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">3</span> <span class="op">*</span> x <span class="op">-</span> np.exp(x)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime_a(x):</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">3</span> <span class="op">-</span> np.exp(x)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_b(x):</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">2</span> <span class="op">*</span> x <span class="op">+</span> <span class="dv">3</span> <span class="op">*</span> np.cos(x) <span class="op">-</span> np.exp(x)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime_b(x):</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">2</span> <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> np.sin(x) <span class="op">-</span> np.exp(x)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>newton_a <span class="op">=</span> metodo_newton(f_a,f_prime_a,p0<span class="op">=</span><span class="fl">1.5</span>,tol<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>newton_b <span class="op">=</span> metodo_newton(f_b,f_prime_b,p0<span class="op">=</span><span class="fl">1.5</span>,tol<span class="op">=</span><span class="fl">1e-5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 1.5, p1 = 1.5123581458677815
+Iteración 2: p1 = 1.5123581458677815, p2 = 1.512134625427124
+Iteración 3: p2 = 1.512134625427124, p3 = 1.5121345516578504
+
+
+Iteración 1: p0 = 1.5, p1 = 1.268096984432167
+Iteración 2: p1 = 1.268096984432167, p2 = 1.240119693460797
+Iteración 3: p2 = 1.240119693460797, p3 = 1.2397147825931407
+Iteración 4: p3 = 1.2397147825931407, p4 = 1.2397146979752212</code></pre>
+</div>
+</div>
+<div id="a19a4abbc9856814" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:13:36.171025Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:13:36.163884Z&quot;}" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Metodo de la Secante</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>secante_a <span class="op">=</span> metodo_secante(f_a,<span class="dv">1</span>,<span class="dv">2</span>,tol<span class="op">=</span><span class="fl">1e-5</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>secante_b <span class="op">=</span> metodo_secante(f_b,<span class="dv">1</span>,<span class="dv">2</span>,tol<span class="op">=</span><span class="fl">1e-5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 1, p1 = 2, p2 = 1.1686153399174835
+Iteración 2: p1 = 2, p2 = 1.1686153399174835, p3 = 1.3115165547175733
+Iteración 3: p2 = 1.1686153399174835, p3 = 1.3115165547175733, p4 = 1.7970430096312444
+Iteración 4: p3 = 1.3115165547175733, p4 = 1.7970430096312444, p5 = 1.4367778925334904
+Iteración 5: p4 = 1.7970430096312444, p5 = 1.4367778925334904, p6 = 1.4867662868726117
+Iteración 6: p5 = 1.4367778925334904, p6 = 1.4867662868726117, p7 = 1.5153257605230879
+Iteración 7: p6 = 1.4867662868726117, p7 = 1.5153257605230879, p8 = 1.512011934333299
+Iteración 8: p7 = 1.5153257605230879, p8 = 1.512011934333299, p9 = 1.5121339760022816
+Iteración 9: p8 = 1.512011934333299, p9 = 1.5121339760022816, p10 = 1.5121345517620621
+
+
+Iteración 1: p0 = 1, p1 = 2, p2 = 1.1629251374599332
+Iteración 2: p1 = 2, p2 = 1.1629251374599332, p3 = 1.216410423288127
+Iteración 3: p2 = 1.1629251374599332, p3 = 1.216410423288127, p4 = 1.2406842080722846
+Iteración 4: p3 = 1.216410423288127, p4 = 1.2406842080722846, p5 = 1.2397029136618418
+Iteración 5: p4 = 1.2406842080722846, p5 = 1.2397029136618418, p6 = 1.239714692081511
+Iteración 6: p5 = 1.2397029136618418, p6 = 1.239714692081511, p7 = 1.2397146979752531</code></pre>
+</div>
+</div>
+</section>
+<section id="ejericio-4" class="level2">
+<h2 class="anchored" data-anchor-id="ejericio-4">Ejericio 4</h2>
+<p>El polinomio de cuarto grado [𝑓(𝑥) = 230𝑥⁴ + 18𝑥³ + 9𝑥² − 221𝑥 − 9] tiene dos ceros reales, uno en ([-1, 0]) y el otro en ([0, 1]). Intente aproximar estos ceros dentro de (10^{-6}) usando:</p>
+<ol type="a">
+<li>El <strong>método de la secante</strong> (use los extremos como las estimaciones iniciales).</li>
+<li>El <strong>método de Newton</strong> (use el punto medio como estimación inicial).</li>
+</ol>
+<div id="5764e99c98f619e2" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:13:38.348648Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:13:38.341875Z&quot;}" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos la funcion y su derivada para el metodo de newton</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Función f(x) y su derivada f'(x)</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_4(x):</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">230</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">4</span> <span class="op">+</span> <span class="dv">18</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">9</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">221</span> <span class="op">*</span> x <span class="op">-</span> <span class="dv">9</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime_4(x):</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">920</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">54</span> <span class="op">*</span> x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">18</span> <span class="op">*</span> x <span class="op">-</span> <span class="dv">221</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>newton_4_a <span class="op">=</span> metodo_newton(f_4,f_prime_4,<span class="op">-</span><span class="fl">0.5</span>)</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>newton_4_b <span class="op">=</span> metodo_newton(f_4,f_prime_4,<span class="fl">0.5</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = -0.5, p1 = -0.15045248868778283
+Iteración 2: p1 = -0.15045248868778283, p2 = -0.04181681394887035
+Iteración 3: p2 = -0.04181681394887035, p3 = -0.04065934349732934
+Iteración 4: p3 = -0.04065934349732934, p4 = -0.04065928831575899
+Iteración 5: p4 = -0.04065928831575899, p5 = -0.040659288315758865
+
+
+Iteración 1: p0 = 0.5, p1 = -0.7050898203592815
+Iteración 2: p1 = -0.7050898203592815, p2 = -0.3237911142304748
+Iteración 3: p2 = -0.3237911142304748, p3 = -0.06460313103057486
+Iteración 4: p3 = -0.06460313103057486, p4 = -0.04068615115195558
+Iteración 5: p4 = -0.04068615115195558, p5 = -0.04065928834533494
+Iteración 6: p5 = -0.04065928834533494, p6 = -0.040659288315758865</code></pre>
+</div>
+</div>
+<div id="433bca67f3e0c83f" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:27:24.181266Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:27:24.165288Z&quot;}" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ahora con el metodo de la secante</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>secate_4_a <span class="op">=</span> metodo_secante(f_4,<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>secate_4_b <span class="op">=</span> metodo_secante(f_4,<span class="dv">0</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = -1, p1 = 0, p2 = -0.020361990950226245
+Iteración 2: p1 = 0, p2 = -0.020361990950226245, p3 = -0.04069125643524189
+Iteración 3: p2 = -0.020361990950226245, p3 = -0.04069125643524189, p4 = -0.04065926257769109
+Iteración 4: p3 = -0.04069125643524189, p4 = -0.04065926257769109, p5 = -0.040659288315725135
+Iteración 5: p4 = -0.04065926257769109, p5 = -0.040659288315725135, p6 = -0.040659288315758865
+
+
+Iteración 1: p0 = 0, p1 = 1, p2 = 0.25
+Iteración 2: p1 = 1, p2 = 0.25, p3 = 0.7737627651217597
+Iteración 3: p2 = 0.25, p3 = 0.7737627651217597, p4 = -1.2854177835209222
+Iteración 4: p3 = 0.7737627651217597, p4 = -1.2854177835209222, p5 = 0.5945955204028852
+Iteración 5: p4 = -1.2854177835209222, p5 = 0.5945955204028852, p6 = 0.3946411046833955
+Iteración 6: p5 = 0.5945955204028852, p6 = 0.3946411046833955, p7 = -0.6693181355515856
+Iteración 7: p6 = 0.3946411046833955, p7 = -0.6693181355515856, p8 = 0.04971439761607255
+Iteración 8: p7 = -0.6693181355515856, p8 = 0.04971439761607255, p9 = -0.020754150823816236
+Iteración 9: p8 = 0.04971439761607255, p9 = -0.020754150823816236, p10 = -0.04073533289637811
+Iteración 10: p9 = -0.020754150823816236, p10 = -0.04073533289637811, p11 = -0.04065922824320605
+Iteración 11: p10 = -0.04073533289637811, p11 = -0.04065922824320605, p12 = -0.04065928831557162
+Iteración 12: p11 = -0.04065922824320605, p12 = -0.04065928831557162, p13 = -0.040659288315758865</code></pre>
+</div>
+</div>
+</section>
+<section id="ejercicio-5" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-5">Ejercicio 5</h2>
+<p>La función [𝑓(𝑥) = (𝜋𝑥) − 6] tiene un cero en ( (6) ). Sea (𝑝₀ = 0) y (𝑝₁ = 0.48), y use <strong>10 iteraciones</strong> en cada uno de los siguientes métodos para aproximar esta raíz. ¿Cuál método es más eficaz y por qué?</p>
+<ol type="a">
+<li><strong>Método de Bisección</strong></li>
+<li><strong>Método de Newton</strong></li>
+<li><strong>Método de la Secante</strong></li>
+</ol>
+<div id="8af9a12427de78b" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:22:17.179728Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:22:17.160759Z&quot;}" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Definimos sus funciones</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Función f(x) y su derivada f'(x)</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_5(x):</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.tan(np.pi <span class="op">*</span> x) <span class="op">-</span> <span class="dv">6</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime_5(x):</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.pi <span class="op">*</span> (<span class="dv">1</span> <span class="op">/</span> np.cos(np.pi <span class="op">*</span> x))<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>newton_5 <span class="op">=</span> metodo_newton(f_5,f_prime_5,p0<span class="op">=</span><span class="fl">0.48</span>,max_iter<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 0.48, p1 = 0.4675825019258912
+Iteración 2: p1 = 0.4675825019258912, p2 = 0.4551291915177739
+Iteración 3: p2 = 0.4551291915177739, p3 = 0.4485512339384831
+Iteración 4: p3 = 0.4485512339384831, p4 = 0.4474551842507058
+Iteración 5: p4 = 0.4474551842507058, p5 = 0.4474315538237576
+Iteración 6: p5 = 0.4474315538237576, p6 = 0.4474315432887487
+Iteración 7: p6 = 0.4474315432887487, p7 = 0.4474315432887466</code></pre>
+</div>
+</div>
+<div id="54d6d75f60e74c31" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:22:50.229860Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:22:50.222862Z&quot;}" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>secante_5 <span class="op">=</span> metodo_secante(f_5,<span class="dv">0</span>,<span class="fl">0.48</span>,max_iter<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 0, p1 = 0.48, p2 = 0.18119424169051174
+Iteración 2: p1 = 0.48, p2 = 0.18119424169051174, p3 = 0.2861871658222898
+Iteración 3: p2 = 0.18119424169051174, p3 = 0.2861871658222898, p4 = 1.0919861065027499
+Iteración 4: p3 = 0.2861871658222898, p4 = 1.0919861065027499, p5 = -3.6922966654011073
+Iteración 5: p4 = 1.0919861065027499, p5 = -3.6922966654011073, p6 = -22.60064985474053
+Iteración 6: p5 = -3.6922966654011073, p6 = -22.60064985474053, p7 = -57.22283247260205
+Iteración 7: p6 = -22.60064985474053, p7 = -57.22283247260205, p8 = 3.5387581457345476
+Iteración 8: p7 = -57.22283247260205, p8 = 3.5387581457345476, p9 = -113.94440504807905
+Iteración 9: p8 = 3.5387581457345476, p9 = -113.94440504807905, p10 = -195.89499482451663
+Iteración 10: p9 = -113.94440504807905, p10 = -195.89499482451663, p11 = -2989.9400375314453
+No se alcanzó la tolerancia en el número máximo de iteraciones.</code></pre>
+</div>
+</div>
+<div id="6dbc007dfb18489e" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:25:05.514122Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:25:05.506812Z&quot;}" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>biseccion_5 <span class="op">=</span> metodo_biseccion(f_5,<span class="dv">0</span>,<span class="fl">0.48</span>,max_iter<span class="op">=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Resolviendo el intervalo [0,0.48] con tolerancia 0.0001
+Iteracion 1: p = 0.24, p1 = -5.060937494182507
+Iteracion 2: p = 0.36, p2 = -3.874891826842797
+Iteracion 3: p = 0.42, p3 = -2.105257145070144
+Iteracion 4: p = 0.44999999999999996, p4 = 0.3137515146750314
+Iteracion 5: p = 0.43499999999999994, p5 = -1.171182647807246
+Iteracion 6: p = 0.44249999999999995, p6 = -0.5245211508218706
+Iteracion 7: p = 0.4462499999999999, p7 = -0.13434976287736955
+Iteracion 8: p = 0.44812499999999994, p8 = 0.08167438867622234
+Iteracion 9: p = 0.44718749999999996, p9 = -0.028237440581283302
+Iteracion 10: p = 0.44765625, p10 = 0.0262307752703812</code></pre>
+</div>
+</div>
+<p>El método de Newton es generalmente considerado el más eficiente debido a su rapidez y eficiencia en la reducción del error. Este método converge rápidamente hacia la solución, lo que lo convierte en una opción ideal cuando se dispone de un buen valor inicial. Sin embargo, si no contamos con un valor inicial adecuado, el método de la secante puede ser más apropiado. Aunque este método puede requerir más iteraciones, tiene la ventaja de no necesitar el cálculo de la primera derivada de la función. Finalmente, el método de la bisección, aunque fiable, es comparativamente más lento que los otros dos métodos.</p>
+</section>
+<section id="ejercicio-6" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-6">Ejercicio 6</h2>
+<p>La función descrita por [𝑓(𝑥) = (𝑥² + 1) − e^{0.4𝑥} (𝜋𝑥)] tiene un número infinito de ceros.</p>
+<ol type="a">
+<li><p>Determine, dentro de (10^{-6}), el único cero negativo.</p></li>
+<li><p>Determine, dentro de (10^{-6}), los <strong>cuatro ceros positivos más pequeños</strong>.</p></li>
+<li><p>Determine una aproximación inicial razonable para encontrar el enésimo cero positivo más pequeño de (𝑓). [Sugerencia: Dibuje una gráfica aproximada de (𝑓).]</p></li>
+<li><p>Use la parte c) para determinar, dentro de (10^{-6}), el <strong>vigesimoquinto cero positivo más pequeño</strong> de (𝑓).</p></li>
+</ol>
+<div id="54b117665bd363b9" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:32:54.051783Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:32:54.026609Z&quot;}" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Literal A</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_6(x):</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.log(x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>) <span class="op">-</span> np.exp(<span class="fl">0.4</span> <span class="op">*</span> x) <span class="op">*</span> np.cos(np.pi <span class="op">*</span> x)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime_6(x):</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">2</span> <span class="op">*</span> x <span class="op">/</span> (x<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span>)) <span class="op">-</span> <span class="fl">0.4</span> <span class="op">*</span> np.exp(<span class="fl">0.4</span> <span class="op">*</span> x) <span class="op">*</span> np.cos(np.pi <span class="op">*</span> x) <span class="op">+</span> np.pi <span class="op">*</span> np.exp(<span class="fl">0.4</span> <span class="op">*</span> x) <span class="op">*</span> np.sin(np.pi <span class="op">*</span> x)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>unico_cero <span class="op">=</span> metodo_newton(f_6,f_prime_6,p0<span class="op">=-</span><span class="fl">0.5</span>)</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = -0.5, p1 = -0.43382689545228015
+Iteración 2: p1 = -0.43382689545228015, p2 = -0.4341430585731075
+Iteración 3: p2 = -0.4341430585731075, p3 = -0.43414304728572883
+Iteración 4: p3 = -0.43414304728572883, p4 = -0.4341430472857288</code></pre>
+</div>
+</div>
+<div id="19a911a14f38d4aa" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:40:20.912222Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:40:20.904223Z&quot;}" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Literal B</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Lista para almacenar los ceros</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>ceros_positivos <span class="op">=</span> []</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Aproximaciones iniciales para los primeros cuatro ceros positivos</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>p_iniciales <span class="op">=</span> [<span class="fl">0.5</span>, <span class="fl">1.5</span>, <span class="fl">2.5</span>, <span class="fl">3.5</span>]</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> p <span class="kw">in</span> p_iniciales:</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    cero <span class="op">=</span> metodo_newton(f_6, f_prime_6, p0<span class="op">=</span>p)</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    ceros_positivos.append(cero)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Cuatro ceros positivos más pequeños: </span><span class="sc">{</span>ceros_positivos<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 0.5, p1 = 0.451879159703456
+Iteración 2: p1 = 0.451879159703456, p2 = 0.4506577398553849
+Iteración 3: p2 = 0.4506577398553849, p3 = 0.45065674789059323
+Iteración 4: p3 = 0.45065674789059323, p4 = 0.45065674788993576
+
+
+Iteración 1: p0 = 1.5, p1 = 1.745487757282019
+Iteración 2: p1 = 1.745487757282019, p2 = 1.7447374072120456
+Iteración 3: p2 = 1.7447374072120456, p3 = 1.7447380533683496
+Iteración 4: p3 = 1.7447380533683496, p4 = 1.7447380533688273
+
+
+Iteración 1: p0 = 2.5, p1 = 2.2853594225939764
+Iteración 2: p1 = 2.2853594225939764, p2 = 2.2419356088744236
+Iteración 3: p2 = 2.2419356088744236, p3 = 2.2383458848583833
+Iteración 4: p3 = 2.2383458848583833, p4 = 2.238319796456584
+Iteración 5: p4 = 2.238319796456584, p5 = 2.2383197950741383
+Iteración 6: p5 = 2.2383197950741383, p6 = 2.2383197950741383
+
+
+Iteración 1: p0 = 3.5, p1 = 3.7116038835749867
+Iteración 2: p1 = 3.7116038835749867, p2 = 3.709036211970711
+Iteración 3: p2 = 3.709036211970711, p3 = 3.709041201357361
+Iteración 4: p3 = 3.709041201357361, p4 = 3.709041201375952
+
+
+Cuatro ceros positivos más pequeños: [np.float64(0.45065674788993576), np.float64(1.7447380533688273), np.float64(2.2383197950741383), np.float64(3.709041201375952)]</code></pre>
+</div>
+</div>
+<div id="f9e057e4685cff55" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T16:40:23.001741Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T16:40:22.996384Z&quot;}" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Literal D</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Encontrar el vigesimoquinto cero positivo</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>cero_25 <span class="op">=</span> metodo_newton(f_6, f_prime_6,<span class="fl">25.5</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Vigesimoquinto cero positivo: </span><span class="sc">{</span>cero_25<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 25.5, p1 = 25.50007665626619
+Iteración 2: p1 = 25.50007665626619, p2 = 25.50007665391656
+Iteración 3: p2 = 25.50007665391656, p3 = 25.50007665391656
+Vigesimoquinto cero positivo: 25.50007665391656</code></pre>
+</div>
+</div>
+</section>
+<section id="ejercicio-7" class="level2">
+<h2 class="anchored" data-anchor-id="ejercicio-7">Ejercicio 7</h2>
+<p>La función (𝑓(𝑥) = 𝑥^{1/3}) tiene raíz en (𝑥 = 0). Usando el punto de inicio de (𝑥 = 1) y (𝑝₀ = 5), (𝑝₁ = 0.5) para el método de la secante, compare los resultados de los <strong>métodos de la Secante</strong> y de <strong>Newton</strong>.</p>
+<div id="19d1b468c6086684" class="cell" data-executetime="{&quot;end_time&quot;:&quot;2024-11-27T19:50:13.024085Z&quot;,&quot;start_time&quot;:&quot;2024-11-27T19:50:12.993975Z&quot;}" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f7(x):</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span>(<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f_prime7(x):</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (<span class="dv">1</span><span class="op">/</span><span class="dv">3</span>) <span class="op">*</span> x<span class="op">**</span>(<span class="op">-</span><span class="dv">2</span><span class="op">/</span><span class="dv">3</span>)</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>raiz_newton <span class="op">=</span> metodo_newton(f7, f_prime7, <span class="dv">1</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>raiz_secante <span class="op">=</span> metodo_secante(f7, <span class="dv">5</span>, <span class="fl">0.5</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Resultado del Método de Newton: </span><span class="sc">{</span>raiz_newton<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>)</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Resultado del Método de la Secante: </span><span class="sc">{</span>raiz_secante<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Iteración 1: p0 = 1, p1 = -2.0
+Iteración 2: p1 = -2.0, p2 = (4-2.2893847434456487e-15j)
+Iteración 3: p2 = (4-2.2893847434456487e-15j), p3 = (-7.999999999999998+4.5787694868912965e-15j)
+Iteración 4: p3 = (-7.999999999999998+4.5787694868912965e-15j), p4 = (15.999999999999991-2.195811558520189e-14j)
+Iteración 5: p4 = (15.999999999999991-2.195811558520189e-14j), p5 = (-31.99999999999998+4.391623117040377e-14j)
+Iteración 6: p5 = (-31.99999999999998+4.391623117040377e-14j), p6 = (63.999999999999936-1.1889466323432573e-13j)
+Iteración 7: p6 = (63.999999999999936-1.1889466323432573e-13j), p7 = (-127.99999999999983+2.377893264686514e-13j)
+Iteración 8: p7 = (-127.99999999999983+2.377893264686514e-13j), p8 = (255.9999999999996-6.413344150144774e-13j)
+Iteración 9: p8 = (255.9999999999996-6.413344150144774e-13j), p9 = (-511.99999999999903+1.282668830028954e-12j)
+Iteración 10: p9 = (-511.99999999999903+1.282668830028954e-12j), p10 = (1023.9999999999977-2.1878942263561007e-12j)
+Iteración 11: p10 = (1023.9999999999977-2.1878942263561007e-12j), p11 = (-2047.9999999999945+4.3757884527122e-12j)
+Iteración 12: p11 = (-2047.9999999999945+4.3757884527122e-12j), p12 = (4095.999999999988-1.0137639848509385e-11j)
+Iteración 13: p12 = (4095.999999999988-1.0137639848509385e-11j), p13 = (-8191.999999999972+2.0275279697018756e-11j)
+Iteración 14: p13 = (-8191.999999999972+2.0275279697018756e-11j), p14 = (16383.99999999993-3.59886397579014e-11j)
+Iteración 15: p14 = (16383.99999999993-3.59886397579014e-11j), p15 = (-32767.999999999844+7.197727951580276e-11j)
+Iteración 16: p15 = (-32767.999999999844+7.197727951580276e-11j), p16 = (65535.999999999636-1.548646291908965e-10j)
+Iteración 17: p16 = (65535.999999999636-1.548646291908965e-10j), p17 = (-131071.99999999914+3.097292583817926e-10j)
+Iteración 18: p17 = (-131071.99999999914+3.097292583817926e-10j), p18 = (262143.99999999808-5.953132449148943e-10j)
+Iteración 19: p18 = (262143.99999999808-5.953132449148943e-10j), p19 = (-524287.99999999563+1.1906264898297877e-09j)
+Iteración 20: p19 = (-524287.99999999563+1.1906264898297877e-09j), p20 = (1048575.9999999905-2.5302940501222528e-09j)
+Iteración 21: p20 = (1048575.9999999905-2.5302940501222528e-09j), p21 = (-2097151.9999999783+5.0605881002445005e-09j)
+Iteración 22: p21 = (-2097151.9999999783+5.0605881002445005e-09j), p22 = (4194303.9999999534-8.852382300433e-09j)
+Iteración 23: p22 = (4194303.9999999534-8.852382300433e-09j), p23 = (-8388607.999999896+1.770476460086598e-08j)
+Iteración 24: p23 = (-8388607.999999896+1.770476460086598e-08j), p24 = (16777215.999999776-4.0217955610121755e-08j)
+Iteración 25: p24 = (16777215.999999776-4.0217955610121755e-08j), p25 = (-33554431.99999951+8.043591122024339e-08j)
+Iteración 26: p25 = (-33554431.99999951+8.043591122024339e-08j), p26 = (67108863.99999891-1.577030033366861e-07j)
+Iteración 27: p26 = (67108863.99999891-1.577030033366861e-07j), p27 = (-134217727.99999763+3.1540600667337177e-07j)
+Iteración 28: p27 = (-134217727.99999763+3.1540600667337177e-07j), p28 = (268435455.999995-5.94381275179622e-07j)
+Iteración 29: p28 = (268435455.999995-5.94381275179622e-07j), p29 = (-536870911.99998915+1.1887625503592426e-06j)
+Iteración 30: p29 = (-536870911.99998915+1.1887625503592426e-06j), p30 = (1073741823.9999768-2.518291543143952e-06j)
+Iteración 31: p30 = (1073741823.9999768-2.518291543143952e-06j), p31 = (-2147483647.9999504+5.036583086287896e-06j)
+Iteración 32: p31 = (-2147483647.9999504+5.036583086287896e-06j), p32 = (4294967295.999893-9.712665815302494e-06j)
+Iteración 33: p32 = (4294967295.999893-9.712665815302494e-06j), p33 = (-8589934591.999771+1.9425331630604957e-05j)
+Iteración 34: p33 = (-8589934591.999771+1.9425331630604957e-05j), p34 = (17179869183.999512-4.003991368540312e-05j)
+Iteración 35: p34 = (17179869183.999512-4.003991368540312e-05j), p35 = (-34359738367.99897+8.007982737080612e-05j)
+Iteración 36: p35 = (-34359738367.99897+8.007982737080612e-05j), p36 = (68719476735.997826-0.00016341509413929687j)
+Iteración 37: p36 = (68719476735.997826-0.00016341509413929687j), p37 = (-137438953471.99539+0.00032683018827859303j)
+Iteración 38: p37 = (-137438953471.99539+0.00032683018827859303j), p38 = (274877906943.9902-0.0006171217414231852j)
+Iteración 39: p38 = (274877906943.9902-0.0006171217414231852j), p39 = (-549755813887.97925+0.0012342434828463682j)
+Iteración 40: p39 = (-549755813887.97925+0.0012342434828463682j), p40 = (1099511627775.9563-0.0024922452236234433j)
+Iteración 41: p40 = (1099511627775.9563-0.0024922452236234433j), p41 = (-2199023255551.908+0.004984490447246874j)
+Iteración 42: p41 = (-2199023255551.908+0.004984490447246874j), p42 = (4398046511103.8047-0.010199603119741985j)
+Iteración 43: p42 = (4398046511103.8047-0.010199603119741985j), p43 = (-8796093022207.59+0.02039920623948392j)
+Iteración 44: p43 = (-8796093022207.59+0.02039920623948392j), p44 = (17592186044415.137-0.04202748137812645j)
+Iteración 45: p44 = (17592186044415.137-0.04202748137812645j), p45 = (-35184372088830.2+0.08405496275625271j)
+Iteración 46: p45 = (-35184372088830.2+0.08405496275625271j), p46 = (70368744177660.22-0.15951468205811228j)
+Iteración 47: p46 = (70368744177660.22-0.15951468205811228j), p47 = (-140737488355320.06+0.3190293641162236j)
+Iteración 48: p47 = (-140737488355320.06+0.3190293641162236j), p48 = (281474976710639.3-0.6783258343891401j)
+La derivada es muy cercana a cero, el método no converge.
+
+
+Iteración 1: p0 = 5, p1 = 0.5, p2 = -3.3980117618223327
+Iteración 2: p1 = 0.5, p2 = -3.3980117618223327, p3 = (0.42342548212957754-2.373791283892393j)
+Iteración 3: p2 = -3.3980117618223327, p3 = (0.42342548212957754-2.373791283892393j), p4 = (-2.506434572816832-3.343001585580911j)
+Iteración 4: p3 = (0.42342548212957754-2.373791283892393j), p4 = (-2.506434572816832-3.343001585580911j), p5 = (1.537946395028479+6.125822678839629j)
+Iteración 5: p4 = (-2.506434572816832-3.343001585580911j), p5 = (1.537946395028479+6.125822678839629j), p6 = (-7.895622939891771+3.325889225481498j)
+Iteración 6: p5 = (1.537946395028479+6.125822678839629j), p6 = (-7.895622939891771+3.325889225481498j), p7 = (6.554151215536118-12.735088076137382j)
+Iteración 7: p6 = (-7.895622939891771+3.325889225481498j), p7 = (6.554151215536118-12.735088076137382j), p8 = (-12.95378376757566-12.317401136903326j)
+Iteración 8: p7 = (6.554151215536118-12.735088076137382j), p8 = (-12.95378376757566-12.317401136903326j), p9 = (5.468753662426424+30.80985385003664j)
+Iteración 9: p8 = (-12.95378376757566-12.317401136903326j), p9 = (5.468753662426424+30.80985385003664j), p10 = (-35.05958741642519+15.886948700273436j)
+Iteración 10: p9 = (5.468753662426424+30.80985385003664j), p10 = (-35.05958741642519+15.886948700273436j), p11 = (32.050165663512885-59.72033599449141j)
+Iteración 11: p10 = (-35.05958741642519+15.886948700273436j), p11 = (32.050165663512885-59.72033599449141j), p12 = (-60.69294161558166-56.55878015192357j)
+Iteración 12: p11 = (32.050165663512885-59.72033599449141j), p12 = (-60.69294161558166-56.55878015192357j), p13 = (25.003712830447+144.33113207100942j)
+Iteración 13: p12 = (-60.69294161558166-56.55878015192357j), p13 = (25.003712830447+144.33113207100942j), p14 = (-163.0538389578072+74.20051941998942j)
+Iteración 14: p13 = (25.003712830447+144.33113207100942j), p14 = (-163.0538389578072+74.20051941998942j), p15 = (149.90944093589647-278.65013651493945j)
+Iteración 15: p14 = (-163.0538389578072+74.20051941998942j), p15 = (149.90944093589647-278.65013651493945j), p16 = (-283.17526560153624-263.571162582952j)
+Iteración 16: p15 = (149.90944093589647-278.65013651493945j), p16 = (-283.17526560153624-263.571162582952j), p17 = (116.48968158137973+673.4027429444614j)
+Iteración 17: p16 = (-283.17526560153624-263.571162582952j), p17 = (116.48968158137973+673.4027429444614j), p18 = (-760.4311803892363+346.13437169303984j)
+Iteración 18: p17 = (116.48968158137973+673.4027429444614j), p18 = (-760.4311803892363+346.13437169303984j), p19 = (699.3656185288155-1299.7857828780218j)
+Iteración 19: p18 = (-760.4311803892363+346.13437169303984j), p19 = (699.3656185288155-1299.7857828780218j), p20 = (-1320.8900563245384-1229.3584115710375j)
+Iteración 20: p19 = (699.3656185288155-1299.7857828780218j), p20 = (-1320.8900563245384-1229.3584115710375j), p21 = (543.326975583032+3141.131427360435j)
+Iteración 21: p20 = (-1320.8900563245384-1229.3584115710375j), p21 = (543.326975583032+3141.131427360435j), p22 = (-3546.9914314657844+1614.5496089745213j)
+Iteración 22: p21 = (543.326975583032+3141.131427360435j), p22 = (-3546.9914314657844+1614.5496089745213j), p23 = (3262.219386939554-6062.851826393732j)
+Iteración 23: p22 = (-3546.9914314657844+1614.5496089745213j), p23 = (3262.219386939554-6062.851826393732j), p24 = (-6161.291746869603-5734.318375773134j)
+Iteración 24: p23 = (3262.219386939554-6062.851826393732j), p24 = (-6161.291746869603-5734.318375773134j), p25 = (2534.3357456777176+14651.80747770748j)
+Iteración 25: p24 = (-6161.291746869603-5734.318375773134j), p25 = (2534.3357456777176+14651.80747770748j), p26 = (-16544.916653716667+7531.061937836286j)
+Iteración 26: p25 = (2534.3357456777176+14651.80747770748j), p26 = (-16544.916653716667+7531.061937836286j), p27 = (15216.617409777293-28280.14888843895j)
+Iteración 27: p26 = (-16544.916653716667+7531.061937836286j), p27 = (15216.617409777293-28280.14888843895j), p28 = (-28739.32124619665-26747.699000810822j)
+Iteración 28: p27 = (15216.617409777293-28280.14888843895j), p28 = (-28739.32124619665-26747.699000810822j), p29 = (11821.395591438351+68343.29858220498j)
+Iteración 29: p28 = (-28739.32124619665-26747.699000810822j), p29 = (11821.395591438351+68343.29858220498j), p30 = (-77173.69207132887+35128.60761493815j)
+Iteración 30: p29 = (11821.395591438351+68343.29858220498j), p30 = (-77173.69207132887+35128.60761493815j), p31 = (70977.8509583179-131912.63726519077j)
+Iteración 31: p30 = (-77173.69207132887+35128.60761493815j), p31 = (70977.8509583179-131912.63726519077j), p32 = (-134054.44474997328-124764.52921812683j)
+Iteración 32: p31 = (70977.8509583179-131912.63726519077j), p32 = (-134054.44474997328-124764.52921812683j), p33 = (55140.84971670003+318787.0327479243j)
+Iteración 33: p32 = (-134054.44474997328-124764.52921812683j), p33 = (55140.84971670003+318787.0327479243j), p34 = (-359976.3646597736+163857.2441495246j)
+Iteración 34: p33 = (55140.84971670003+318787.0327479243j), p34 = (-359976.3646597736+163857.2441495246j), p35 = (331075.8910084634-615305.947571132j)
+Iteración 35: p34 = (-359976.3646597736+163857.2441495246j), p35 = (331075.8910084634-615305.947571132j), p36 = (-625296.3996501989-581963.6268083638j)
+Iteración 36: p35 = (331075.8910084634-615305.947571132j), p36 = (-625296.3996501989-581963.6268083638j), p37 = (257204.26375471032+1486980.7875711839j)
+Iteración 37: p36 = (-625296.3996501989-581963.6268083638j), p37 = (257204.26375471032+1486980.7875711839j), p38 = (-1679108.2543366943+764311.4333198144j)
+Iteración 38: p37 = (257204.26375471032+1486980.7875711839j), p38 = (-1679108.2543366943+764311.4333198144j), p39 = (1544302.115683448-2870092.0312642083j)
+Iteración 39: p38 = (-1679108.2543366943+764311.4333198144j), p39 = (1544302.115683448-2870092.0312642083j), p40 = (-2916692.4533965536-2714566.91470746j)
+Iteración 40: p39 = (1544302.115683448-2870092.0312642083j), p40 = (-2916692.4533965536-2714566.91470746j), p41 = (1199728.2176059298+6936015.694124965j)
+Iteración 41: p40 = (-2916692.4533965536-2714566.91470746j), p41 = (1199728.2176059298+6936015.694124965j), p42 = (-7832193.462985488+3565127.4992759265j)
+Iteración 42: p41 = (1199728.2176059298+6936015.694124965j), p42 = (-7832193.462985488+3565127.4992759265j), p43 = (7203390.790478623-13387532.33304789j)
+Iteración 43: p42 = (-7832193.462985488+3565127.4992759265j), p43 = (7203390.790478623-13387532.33304789j), p44 = (-13604899.808107963-12662086.074203722j)
+Iteración 44: p43 = (7203390.790478623-13387532.33304789j), p44 = (-13604899.808107963-12662086.074203722j), p45 = (5596127.277121918+32353016.334013768j)
+Iteración 45: p44 = (-13604899.808107963-12662086.074203722j), p45 = (5596127.277121918+32353016.334013768j), p46 = (-36533233.806475356+16629522.38048752j)
+Iteración 46: p45 = (5596127.277121918+32353016.334013768j), p46 = (-36533233.806475356+16629522.38048752j), p47 = (33600186.357996166-62446088.84173228j)
+Iteración 47: p46 = (-36533233.806475356+16629522.38048752j), p47 = (33600186.357996166-62446088.84173228j), p48 = (-63459998.52435477-59062247.78702162j)
+Iteración 48: p47 = (33600186.357996166-62446088.84173228j), p48 = (-63459998.52435477-59062247.78702162j), p49 = (26103112.390179977+150910510.02017367j)
+Iteración 49: p48 = (-63459998.52435477-59062247.78702162j), p49 = (26103112.390179977+150910510.02017367j), p50 = (-170409117.02025253+77568337.92318794j)
+Iteración 50: p49 = (26103112.390179977+150910510.02017367j), p50 = (-170409117.02025253+77568337.92318794j), p51 = (156727929.40567666-291279521.4696274j)
+Iteración 51: p50 = (-170409117.02025253+77568337.92318794j), p51 = (156727929.40567666-291279521.4696274j), p52 = (-296008898.963808-275495608.9552074j)
+Iteración 52: p51 = (156727929.40567666-291279521.4696274j), p52 = (-296008898.963808-275495608.9552074j), p53 = (121757859.08945823+703921445.8221972j)
+Iteración 53: p52 = (-296008898.963808-275495608.9552074j), p53 = (121757859.08945823+703921445.8221972j), p54 = (-794872617.0108638+361817189.36352414j)
+Iteración 54: p53 = (121757859.08945823+703921445.8221972j), p54 = (-794872617.0108638+361817189.36352414j), p55 = (731056774.3307936-1358672115.4403884j)
+Iteración 55: p54 = (-794872617.0108638+361817189.36352414j), p55 = (731056774.3307936-1358672115.4403884j), p56 = (-1380732277.0759008-1285048121.217611j)
+Iteración 56: p55 = (731056774.3307936-1358672115.4403884j), p56 = (-1380732277.0759008-1285048121.217611j), p57 = (567939026.9041507+3283438653.9557257j)
+Iteración 57: p56 = (-1380732277.0759008-1285048121.217611j), p57 = (567939026.9041507+3283438653.9557257j), p58 = (-3707680013.379861+1687694773.7175364j)
+Iteración 58: p57 = (567939026.9041507+3283438653.9557257j), p58 = (-3707680013.379861+1687694773.7175364j), p59 = (3410011280.832924-6337520426.981846j)
+Iteración 59: p58 = (-3707680013.379861+1687694773.7175364j), p59 = (3410011280.832924-6337520426.981846j), p60 = (-6440419959.104992-5994101612.390502j)
+Iteración 60: p59 = (3410011280.832924-6337520426.981846j), p60 = (-6440419959.104992-5994101612.390502j), p61 = (2649149226.9410477+15315585934.02161j)
+Iteración 61: p60 = (-6440419959.104992-5994101612.390502j), p61 = (2649149226.9410477+15315585934.02161j), p62 = (-17294457989.145466+7872245246.9546385j)
+Iteración 62: p61 = (2649149226.9410477+15315585934.02161j), p62 = (-17294457989.145466+7872245246.9546385j), p63 = (15905983425.230137-29561337651.64799j)
+Iteración 63: p62 = (-17294457989.145466+7872245246.9546385j), p63 = (15905983425.230137-29561337651.64799j), p64 = (-30041312090.915806-27959462020.4718j)
+Iteración 64: p63 = (15905983425.230137-29561337651.64799j), p64 = (-30041312090.915806-27959462020.4718j), p65 = (12356945541.949398+71439486837.92389j)
+Iteración 65: p64 = (-30041312090.915806-27959462020.4718j), p65 = (12356945541.949398+71439486837.92389j), p66 = (-80669927301.96915+36720055186.099655j)
+Iteración 66: p65 = (12356945541.949398+71439486837.92389j), p66 = (-80669927301.96915+36720055186.099655j), p67 = (74193393478.12894-137888736426.6706j)
+Iteración 67: p66 = (-80669927301.96915+36720055186.099655j), p67 = (74193393478.12894-137888736426.6706j), p68 = (-140127575200.73572-130416794212.87677j)
+Iteración 68: p67 = (74193393478.12894-137888736426.6706j), p68 = (-140127575200.73572-130416794212.87677j), p69 = (57638921044.48114+333229188987.7292j)
+Iteración 69: p68 = (-140127575200.73572-130416794212.87677j), p69 = (57638921044.48114+333229188987.7292j), p70 = (-376284540110.44336+171280544567.86832j)
+Iteración 70: p69 = (57638921044.48114+333229188987.7292j), p70 = (-376284540110.44336+171280544567.86832j), p71 = (346074775047.7942-643181437098.5977j)
+Iteración 71: p70 = (-376284540110.44336+171280544567.86832j), p71 = (346074775047.7942-643181437098.5977j), p72 = (-653624491241.0298-608328593744.4097j)
+Iteración 72: p71 = (346074775047.7942-643181437098.5977j), p72 = (-653624491241.0298-608328593744.4097j), p73 = (268856507289.24646+1554346164962.554j)
+Iteración 73: p72 = (-653624491241.0298-608328593744.4097j), p73 = (268856507289.24646+1554346164962.554j), p74 = (-1755177671056.0112+798937387179.3917j)
+Iteración 74: p73 = (268856507289.24646+1554346164962.554j), p74 = (-1755177671056.0112+798937387179.3917j), p75 = (1614264347669.812-3000117136095.5522j)
+Iteración 75: p74 = (-1755177671056.0112+798937387179.3917j), p75 = (1614264347669.812-3000117136095.5522j), p76 = (-3048828718673.5825-2837546193345.3423j)
+Iteración 76: p75 = (1614264347669.812-3000117136095.5522j), p76 = (-3048828718673.5825-2837546193345.3423j), p77 = (1254080059132.083+7250241216482.281j)
+Iteración 77: p76 = (-3048828718673.5825-2837546193345.3423j), p77 = (1254080059132.083+7250241216482.281j), p78 = (-8187018940691.53+3726640116911.3105j)
+Iteración 78: p77 = (1254080059132.083+7250241216482.281j), p78 = (-8187018940691.53+3726640116911.3105j), p79 = (7529729330310.091-13994033893292.209j)
+Iteración 79: p78 = (-8187018940691.53+3726640116911.3105j), p79 = (7529729330310.091-13994033893292.209j), p80 = (-14221248867464.852-13235722407537.46j)
+Iteración 80: p79 = (7529729330310.091-13994033893292.209j), p80 = (-14221248867464.852-13235722407537.46j), p81 = (5849651215697.48+33818719975060.93j)
+Iteración 81: p80 = (-14221248867464.852-13235722407537.46j), p81 = (5849651215697.48+33818719975060.93j), p82 = (-38188315770285.86+17382897313146.191j)
+Iteración 82: p81 = (5849651215697.48+33818719975060.93j), p82 = (-38188315770285.86+17382897313146.191j), p83 = (35122391118637.97-65275112844918.66j)
+Iteración 83: p82 = (-38188315770285.86+17382897313146.191j), p83 = (35122391118637.97-65275112844918.66j), p84 = (-66334956146161.72-61737972076096.74j)
+Iteración 84: p83 = (35122391118637.97-65275112844918.66j), p84 = (-66334956146161.72-61737972076096.74j), p85 = (27285673746373.875+157747278552822.44j)
+Iteración 85: p84 = (-66334956146161.72-61737972076096.74j), p85 = (27285673746373.875+157747278552822.44j), p86 = (-178129239951151.47+81082452160640.78j)
+Iteración 86: p85 = (27285673746373.875+157747278552822.44j), p86 = (-178129239951151.47+81082452160640.78j), p87 = (163828247175489.78-304475492156640.9j)
+Iteración 87: p86 = (-178129239951151.47+81082452160640.78j), p87 = (163828247175489.78-304475492156640.9j), p88 = (-309419126823678.1-287976513763864.3j)
+Iteración 88: p87 = (163828247175489.78-304475492156640.9j), p88 = (-309419126823678.1-287976513763864.3j), p89 = (127273911612999.31+735811524184600j)
+Iteración 89: p88 = (-309419126823678.1-287976513763864.3j), p89 = (127273911612999.31+735811524184600j), p90 = (-830883098286933.5+378208760596577.4j)
+Iteración 90: p89 = (127273911612999.31+735811524184600j), p90 = (-830883098286933.5+378208760596577.4j), p91 = (764176177012924-1420224665781568j)
+Iteración 91: p90 = (-830883098286933.5+378208760596577.4j), p91 = (764176177012924-1420224665781568j), p92 = (-1443284229108021.8-1343265249745667.8j)
+Iteración 92: p91 = (764176177012924-1420224665781568j), p92 = (-1443284229108021.8-1343265249745667.8j), p93 = (593668630939568.8+3432189791734300j)
+Iteración 93: p92 = (-1443284229108021.8-1343265249745667.8j), p93 = (593668630939568.8+3432189791734300j), p94 = (-3875650753398008+1764153189503988.8j)
+Iteración 94: p93 = (593668630939568.8+3432189791734300j), p94 = (-3875650753398008+1764153189503988.8j), p95 = (3564496596783791-6624632041835007j)
+Iteración 95: p94 = (-3875650753398008+1764153189503988.8j), p95 = (3564496596783791-6624632041835007j), p96 = (-6732193278985523-6265655166080094j)
+Iteración 96: p95 = (3564496596783791-6624632041835007j), p96 = (-6732193278985523-6265655166080094j), p97 = (2769164857864443+1.6009434997011262e+16j)
+Iteración 97: p96 = (-6732193278985523-6265655166080094j), p97 = (2769164857864443+1.6009434997011262e+16j), p98 = (-1.8077956806779764e+16+8228885209131412j)
+Iteración 98: p97 = (2769164857864443+1.6009434997011262e+16j), p98 = (-1.8077956806779764e+16+8228885209131412j), p99 = (1.6626579538435876e+16-3.0900568584024804e+16j)
+Iteración 99: p98 = (-1.8077956806779764e+16+8228885209131412j), p99 = (1.6626579538435876e+16-3.0900568584024804e+16j), p100 = (-3.140228752698838e+16-2.92261224413118e+16j)
+Iteración 100: p99 = (1.6626579538435876e+16-3.0900568584024804e+16j), p100 = (-3.140228752698838e+16-2.92261224413118e+16j), p101 = (1.2916757952824988e+16+7.467594290408362e+16j)
+No se alcanzó la tolerancia en el número máximo de iteraciones.
+Resultado del Método de Newton: None
+
+
+Resultado del Método de la Secante: (1.2916757952824988e+16+7.467594290408362e+16j)</code></pre>
+</div>
+</div>
+<div id="27590cb8e4d2f3c1" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
